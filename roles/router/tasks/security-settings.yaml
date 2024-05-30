@@ -1,0 +1,24 @@
+- name: Disable Root SSH Login
+  become: yes
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^#?PermitRootLogin"
+    line: "PermitRootLogin no"
+    state: present
+  register: ssh_config
+
+- name: Disable SSH Password Authentication
+  become: yes
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^#?PasswordAuthentication"
+    line: "PasswordAuthentication no"
+    state: present
+  register: password_auth
+
+- name: Reload SSHD to apply changes
+  become: yes
+  systemd:
+    name: ssh
+    state: reloaded
+  when: ssh_config.changed or password_auth.changed

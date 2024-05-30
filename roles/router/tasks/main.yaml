@@ -1,0 +1,11 @@
+- name: Install necessary tools
+  import_tasks: install-tools.yaml
+
+- name: Setup network
+  import_tasks: setup-network.yaml
+
+- name: Apply security settings
+  import_tasks: security-settings.yaml
+
+- name: Install Docker
+  import_tasks: install-docker.yaml

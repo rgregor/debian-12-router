@@ -1,0 +1,196 @@
+- name: Set hostname
+  become: yes
+  hostname:
+    name: router
+
+- name: Install packages
+  become: yes
+  apt:
+    name:
+      - isc-dhcp-server
+      - bridge-utils
+      - radvd
+      - wide-dhcpv6-client
+    state: present
+
+- name: Configure /etc/network/interfaces
+  become: yes
+  copy:
+    src: conf/interfaces
+    dest: /etc/network/interfaces
+    owner: root
+    group: root
+    mode: "0644"
+  register: copy_interfaces
+
+- name: Enable IPv4 forwarding
+  become: yes
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    state: present
+    reload: yes
+    sysctl_set: yes
+
+- name: Enable IPv6 forwarding
+  become: yes
+  sysctl:
+    name: net.ipv6.conf.all.forwarding
+    value: '1'
+    state: present
+    reload: yes
+    sysctl_set: yes
+
+- name: Configure ARP params 1
+  become: yes
+  sysctl:
+    name: net.ipv4.conf.all.arp_filter
+    value: '1'
+    state: present
+    reload: yes
+    sysctl_set: yes
+
+- name: Configure ARP params 2
+  become: yes
+  sysctl:
+    name: net.ipv4.conf.all.arp_announce
+    value: '1'
+    state: present
+    reload: yes
+    sysctl_set: yes
+
+- name: Configure ARP params 3
+  become: yes
+  sysctl:
+    name: net.ipv4.conf.all.arp_ignore
+    value: '1'
+    state: present
+    reload: yes
+    sysctl_set: yes
+
+- name: Reload networking service
+  become: yes
+  systemd:
+    name: networking
+    state: restarted
+  when: copy_interfaces.changed
+
+- name: Copy iptables-rules.sh to /usr/local/bin
+  become: yes
+  copy:
+    src: conf/iptables-rules.sh
+    dest: /usr/local/bin/iptables-rules.sh
+    owner: root
+    group: root
+    mode: "0755"
+  register: copy_iptables_rules_sh
+
+- name: Copy iptables-rules.service to /etc/systemd/system
+  become: yes
+  copy:
+    src: conf/iptables-rules.service
+    dest: /etc/systemd/system/iptables-rules.service
+    owner: root
+    group: root
+    mode: "0644"
+  register: copy_iptables_rules_service
+
+- name: Restart iptables-rules service
+  become: yes
+  systemd:
+    name: iptables-rules
+    state: restarted
+    enabled: yes
+  when: copy_iptables_rules_sh.changed or copy_iptables_rules_service.changed
+
+- name: Copy DHCPv6-PD config 1
+  become: yes
+  copy:
+    src: conf/wide-dhcpv6-client
+    dest: /etc/default/wide-dhcpv6-client
+    owner: root
+    group: root
+    mode: "0644"
+  register: copy_dhcpv6_pd_1
+
+- name: Copy DHCPv6-PD config 2
+  become: yes
+  copy:
+    src: conf/dhcp6c.conf
+    dest: /etc/wide-dhcpv6/dhcp6c.conf
+    owner: root
+    group: root
+    mode: "0644"
+  register: copy_dhcpv6_pd_2
+
+- name: Copy DHCPv6-PD config 3
+  become: yes
+  copy:
+    src: conf/dhcp6c-script
+    dest: /etc/wide-dhcpv6/dhcp6c-script
+    owner: root
+    group: root
+    mode: "0755"
+  register: copy_dhcpv6_pd_3
+
+- name: Reload wide-dhcpv6-client
+  become: yes
+  systemd:
+    name: wide-dhcpv6-client
+    state: restarted
+  when: copy_dhcpv6_pd_1.changed or copy_dhcpv6_pd_2.changed or copy_dhcpv6_pd_2.changed
+
+- name: Deploy DHCP configuration dhcpd.conf
+  become: yes
+  copy:
+    src: conf/dhcpd.conf
+    dest: /etc/dhcp/dhcpd.conf
+    owner: root
+    group: root
+    mode: "0644"
+  register: copy_dhcp_config_1
+
+- name: Deploy DHCP configuration isc-dhcp-server
+  become: yes
+  copy:
+    src: conf/isc-dhcp-server
+    dest: /etc/default/isc-dhcp-server
+    owner: root
+    group: root
+    mode: "0644"
+  register: copy_dhcp_config_2
+
+- name: Deploy DHCP configuration leave_my_resolv_conf_alone
+  become: yes
+  copy:
+    src: conf/leave_my_resolv_conf_alone
+    dest: /etc/dhcp/dhclient-enter-hooks.d/leave_my_resolv_conf_alone
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Restart DHCP server if config changed
+  become: yes
+  service:
+    name: isc-dhcp-server
+    state: restarted
+    enabled: yes
+  when: copy_dhcp_config_1.changed or copy_dhcp_config_2.changed
+
+- name: Deploy Radvd configuration
+  become: yes
+  copy:
+    src: conf/radvd.conf
+    dest: /etc/radvd.conf
+    owner: root
+    group: root
+    mode: "0644"
+  register: copy_radvd_config
+
+- name: Restart Radvd if config changed
+  become: yes
+  service:
+    name: radvd
+    state: restarted
+    enabled: yes
+  when: copy_radvd_config.changed

@@ -1,0 +1,36 @@
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface (WAN)
+allow-hotplug WAN_PORT_TO_BE_FILLED
+iface WAN_PORT_TO_BE_FILLED inet dhcp
+iface WAN_PORT_TO_BE_FILLED inet6 auto
+
+# Define bridge interface
+auto LAN_PORT_TO_BE_FILLED
+iface LAN_PORT_TO_BE_FILLED inet static
+  bridge_ports LAN_PORTS_LIST
+  address 192.168.0.1
+  netmask 255.255.255.0
+
+# Bring up bridge ports with the bridge
+  # TODO: replace the following with your LAN ports
+  # up ip link set enp2s0 up
+  # up ip link set enp3s0 up
+  # up ip link set enp4s0 up
+
+# Bring bridge interface up
+  up ip link set LAN_PORT_TO_BE_FILLED up
+
+# IPv6 GUA (managed by dhclient)
+iface LAN_PORT_TO_BE_FILLED inet6 manual
+
+iface LAN_PORT_TO_BE_FILLED inet6 static
+  address ULA_PREFIX_TO_BE_FILLED::1
+  netmask 64
