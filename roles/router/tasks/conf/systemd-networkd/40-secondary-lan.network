@@ -1,0 +1,39 @@
+#Intel I225
+[Match]
+Name=enp3s0
+
+[Link]
+ActivationPolicy=up
+
+[Network]
+Description=Secondary link to LAN, intended for connecting WiFI AP
+VLAN=guest
+VLAN=ghetto
+#spawn DHCPv4 Server, see section below
+#DHCPServer=yes
+LinkLocalAddressing=ipv6
+#Act as IPv6 SLAAC router
+IPv6SendRA=yes
+IPv6AcceptRA=no
+#Attempt to push Ipv6 Prefix
+DHCPv6PrefixDelegation=yes
+
+[Address]
+# Simple static IPv4 configuration.
+Address=192.168.20.1/24
+
+#DHCPv4 Server settings
+# NOte: we use dnsmasq as DHCPv4 Server, as sytemd-networkd does not register DHCP hostnames to DNS without hassle
+#[DHCPServer]
+# make sure NTP and DNS Services are configured appropriately
+#DNS=192.168.20.1
+#NTP=192.168.20.1
+#Router=192.168.20.1
+
+[IPv6SendRA]
+EmitDNS=yes
+EmitDomains=yes
+
+[DHCPv6PrefixDelegation]
+# This assigns the second prefix from the pool.
+SubnetId=0x2

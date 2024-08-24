@@ -5,7 +5,7 @@
   changed_when: false
 
 - name: Ensure /etc/apt/keyrings directory exists
-  become: yes
+  become: true
   file:
     path: /etc/apt/keyrings
     state: directory
@@ -13,7 +13,7 @@
   when: docker_installed.rc != 0
 
 - name: Add Docker's official GPG key
-  become: yes
+  become: true
   get_url:
     url: "{{ docker_gpg_key_url }}"
     dest: "{{ docker_gpg_key_dest }}"
@@ -24,7 +24,7 @@
   when: docker_installed.rc != 0
 
 - name: Add Docker repository
-  become: yes
+  become: true
   apt_repository:
     repo: "{{ docker_apt_repo }}"
     state: present
@@ -35,19 +35,19 @@
   when: docker_installed.rc != 0
 
 - name: Install Docker and related packages
-  become: yes
+  become: true
   apt:
     name: docker-ce
-    update_cache: yes
+    update_cache: true
     state: present
   when: docker_installed.rc != 0
 
 - name: Add Ansible user to docker group
-  become: yes
+  become: true
   user:
     name: "{{ ansible_user }}"
     groups: docker
-    append: yes
+    append: true
   when: docker_installed.rc != 0
 
 - name: Reset SSH connection to allow group add to take effect

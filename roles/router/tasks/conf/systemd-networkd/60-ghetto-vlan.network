@@ -1,0 +1,36 @@
+#Intel I225
+[Match]
+Name=ghetto
+
+[Link]
+ActivationPolicy=up
+
+[Network]
+Description=guest VLAN on secondary link to LAN, intended for connecting WiFI AP
+#spawn DHCPv4 Server, see section below
+#DHCPServer=yes
+LinkLocalAddressing=no
+#Act as IPv6 SLAAC router
+#IPv6SendRA=yes
+#IPv6AcceptRA=no
+#Attempt to push Ipv6 Prefix
+#DHCPv6PrefixDelegation=yes
+
+[Address]
+# Simple static IPv4 configuration.
+Address=192.168.254.1/24
+
+#DHCPv4 Server settings
+#[DHCPServer]
+# make sure NTP and DNS Services are configured appropriately
+#DNS=192.168.20.1
+#NTP=192.168.20.1
+#Router=192.168.20.1
+
+#[IPv6SendRA]
+#EmitDNS=yes
+#EmitDomains=yes
+
+#[DHCPv6PrefixDelegation]
+# This assigns the second prefix from the pool.
+#SubnetId=0x2

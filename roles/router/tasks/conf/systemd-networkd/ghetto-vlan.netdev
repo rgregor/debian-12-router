@@ -1,0 +1,7 @@
+# A VLAN used by the Wifi AP for "untrusted" IOT devices etc.
+[NetDev]
+Name=ghetto
+Kind=vlan
+
+[VLAN]
+Id=254

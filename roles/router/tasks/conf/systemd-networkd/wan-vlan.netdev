@@ -1,0 +1,7 @@
+# THE ISP expects traffic on VLAN10 of the fiber ethernet interface... hence we need to create the VLAN first
+[NetDev]
+Name=wan
+Kind=vlan
+
+[VLAN]
+Id=10

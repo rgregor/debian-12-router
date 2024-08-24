@@ -1,0 +1,10 @@
+# code: language=ansible
+---
+## TODO: add shared variables here, especially if moving to more templates over static configuration files
+## NB: please don't add data here that could compromise security
+
+## NOTE: variables below have been disabled in favor of router_secrets_vault.yml
+## the user to be used for Adguard
+# router_adguard_user: "adguard"
+## the password hash (configure AdGuard manually to obtain one for your password)
+# router_adguard_password_hash: "$2B$10$paKZ9MnX2FGGriJTigPGLUy.yRJ1d8sFJqTucSoWyzTO5zOTFo3VU"

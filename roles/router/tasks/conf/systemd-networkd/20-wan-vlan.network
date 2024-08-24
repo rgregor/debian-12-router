@@ -1,0 +1,77 @@
+# For Details, on Debian 12 see: https://manpages.debian.org/bookworm/systemd/systemd.network.5.en.html
+# Note that the supported Option of systemd-networkd seem to be under heavy development
+# always make sure to refer to the correct mangpage for your system!
+[Match]
+# note that the .netdev for the vlan must be processed before this file!
+Name=enp1s0f0np0.10
+
+[Link]
+# TODO: check
+#MTUBytes=1500
+Multicast=true
+#AllMulticast=true
+# TODO: change to yes after intitial testing 
+RequiredForOnline=no
+ActivationPolicy=up
+
+[Network]
+Description=Link to ISP on VLAN 10
+# We only need a link-local address for IPv6 (required to run IPv6),
+# but not for IPv4 (using DHCP).
+LinkLocalAddressing=ipv6
+# SLAAC IPv6 for obtaining the default route.
+# This is needed, because the DHCPv6 response does not include an
+# address with a gateway for the prefixes. We're supposed to use
+# the SLAAC-announced default route one as the 'return route'.
+IPv6AcceptRA=yes
+# Boolean true enables both DHCPv4 and DHCPv6 client. See also the
+# IPv6AcceptRA.DHCPv6Client setting.
+DHCP=yes
+#automaticallöy enables ipv4 and ipv6 forwarding between ALL interfaces on the system!
+# restrictions need to be introduced by firewall
+IPForward=yes
+# The following settings might also be useful when your ISP does not want to delegate a Prefix, see manpage for detzails
+# IPv6ProxyNDP=
+
+[DHCPv4]
+# Hostname sent in the DHCPv4 solicit (request). 
+# You may need to spoof something here if oyur ISP is very restrictive
+Hostname=nsa-prism-tap-v08-15
+# You may need to spoof or use mac here
+#ClientIdentifier=duid
+#DUIDRawData=XXXX
+# Ignore the hostname to set in the reply.
+UseHostname=no
+# Don't use any of the servers suggested DNS or NTP servers
+UseDNS=no
+UseNTP=no
+UseSIP=yes
+UseRoutes=yes
+UseGateway=yes
+
+
+[DHCPv6]
+# The following might be required to request a prefix, when the ISP RA does not "mention" it via a set flag for 
+# "managed" or "other configuration"
+# WithoutRA=solicit
+# the similar option below seems deprecated / undocumented for Debian 12
+# ForceDHCPv6PDOtherInformation=yes
+# Similar as for DHCPv4, I dislike systemd-networkd to use any other
+# information in the reply.
+UseHostname=no
+UseDNS=no
+UseNTP=no
+
+[DHCPPrefixDelegation]
+UplinkInterface=:self
+
+
+[IPv6AcceptRA]
+# Similar for IPv6 via Router Advertisements; I'll handle DNS myself,
+# please.
+UseDNS=no
+# Force starting the DHCPv6 client even if the Router Advertisement
+# indicates it's not required.
+# consider setting it to always to force it, even if ISP RA has no flags set for it
+DHCPv6Client=true
+

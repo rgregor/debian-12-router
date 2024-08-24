@@ -1,6 +1,0 @@
-- name: Initialize router roles
-  hosts: router
-  roles:
-    - router
-
-- import_playbook: pi-hole/main.yaml

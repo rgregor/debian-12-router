@@ -1,0 +1,36 @@
+#Intel X710, second NIC, 10G Fibre 
+[Match]
+Name=enp1s0f1np1
+
+[Link]
+ActivationPolicy=up
+
+[Network]
+Description=Primary LAN fibre Link to Ethernet Switch
+#spawn DHCPv4 Server, see section below
+#DHCPServer=yes
+LinkLocalAddressing=ipv6
+#Act as IPv6 SLAAC router
+IPv6SendRA=yes
+IPv6AcceptRA=no
+#Attempt to push Ipv6 Prefix
+DHCPv6PrefixDelegation=yes
+
+[Address]
+# Simple static IPv4 configuration.
+Address=192.168.10.1/24
+
+#DHCPv4 Server settings
+[DHCPServer]
+# make sure NTP and DNS Services are configured appropriately
+DNS=192.168.10.1
+NTP=192.168.10.1
+Router=192.168.10.1
+
+[IPv6SendRA]
+EmitDNS=yes
+EmitDomains=yes
+
+[DHCPv6PrefixDelegation]
+# This assigns the second prefix from the pool.
+SubnetId=0x1

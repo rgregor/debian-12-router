@@ -1,0 +1,6 @@
+# code: language=ansible
+- name: Run debian12 router setup on solaris2
+  hosts: solaris2
+  become: true
+  roles:
+    - router

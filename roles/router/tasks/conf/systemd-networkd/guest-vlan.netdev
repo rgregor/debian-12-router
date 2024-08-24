@@ -1,0 +1,7 @@
+# A VLAN used by the Wifi AP for "semi-trusted"clients, such as Phones, Tablets and those from visitors
+[NetDev]
+Name=guest
+Kind=vlan
+
+[VLAN]
+Id=100

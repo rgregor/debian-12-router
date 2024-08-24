@@ -1,0 +1,25 @@
+# code: language=ansible
+- name: Ensure dnsmasq is installed
+  ansible.builtin.apt:
+    name: dnsmasq
+    state: present
+  become: true
+  tags: dnsmasq_setup
+
+- name: Copy dnsmasq configuration file to the server
+  ansible.builtin.copy:
+    src: conf/dnsmasq.conf
+    dest: /etc/dnsmasq.conf
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+  tags: dnsmasq_setup
+
+- name: Enable and start dnsmasq service
+  ansible.builtin.systemd:
+    name: dnsmasq
+    enabled: true
+    state: restarted
+  become: true
+  tags: dnsmasq_setup

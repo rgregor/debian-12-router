@@ -1,17 +1,19 @@
+# code: language=ansible
 - name: Install tools
-  become: yes
+  become: true
   apt:
-    update_cache: yes
-    autoremove: yes
+    update_cache: true
+    autoremove: true
     name:
       - ca-certificates
       - curl
       - openssh-server
       - vim
-      - htop
+      - btop
+      - exa
       - dnsutils
       - iperf3
-      - iptables
+      - nftables
       - man
       - zip
       - unzip
@@ -27,4 +29,4 @@
 - name: Perform full upgrade
   command:
     cmd: apt full-upgrade -y
-  become: yes
+  become: true

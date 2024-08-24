@@ -1,0 +1,38 @@
+# code: language=ansible
+- name: Install nftables
+  apt:
+    name: nftables
+    state: present
+  become: true
+
+- name: Copy nftables configuration file
+  ansible.builtin.copy:
+    src: conf/nftables.conf
+    dest: /etc/nftables.conf.new
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+
+- name: Validate nftables configuration
+  ansible.builtin.command: nft -c -f /etc/nftables.conf.new
+  register: nftables_validation
+  become: true
+
+- name: Roll config into place, when validation was successful
+  ansible.builtin.copy:
+    src: /etc/nftables.conf.new
+    dest: /etc/nftables.conf
+    remote_src: true
+    owner: root
+    group: root
+    mode: '0644'
+    backup: true
+  when: nftables_validation.rc == 0
+  become: true
+
+- name: Restart nftables service to apply changes
+  ansible.builtin.systemd:
+    name: nftables
+    state: restarted
+  become: true
