@@ -4,6 +4,8 @@ Name=enp1s0f1np1
 
 [Link]
 ActivationPolicy=up
+IPv4SendRedirects=yes
+Multicast=yes
 
 [Network]
 Description=Primary LAN fibre Link to Ethernet Switch
@@ -31,6 +33,8 @@ Router=192.168.10.1
 EmitDNS=yes
 EmitDomains=yes
 
-[DHCPv6PrefixDelegation]
+[DHCPPrefixDelegation]
+UplinkInterface=:auto
 # This assigns the second prefix from the pool.
-SubnetId=0x1
+SubnetId=0x10
+

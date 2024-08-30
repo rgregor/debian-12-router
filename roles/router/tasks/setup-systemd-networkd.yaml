@@ -1,50 +1,58 @@
 # code: language=ansible
-- name: Configure systemd-networkd on Debian 12
+
+- name: Check the status of the nginx service
+  ansible.builtin.systemd:
+    name: systemd-networkd
+    enabled: true
+    state: started
+
+- name: Copy systemd-networkd config files to the remote machine
+  become: true
+  ansible.builtin.copy:
+    src: conf/systemd-networkd/
+    dest: /etc/systemd/network/
+    owner: root
+    group: root
+    mode: '0644'
+  register: copy_result
   tags: sytemd_networkd_setup
-  block:
-    - name: Copy systemd-networkd config files to the remote machine
-      become: true
-      ansible.builtin.copy:
-        src: conf/systemd-networkd/
-        dest: /etc/systemd/network/
-        owner: root
-        group: root
-        mode: '0644'
-      tags: sytemd_networkd_setup
 
+- name: Check if /etc/network/interfaces directory exists
+  ansible.builtin.stat:
+    path: /etc/network/interfaces
+  register: interfaces_stat
+  tags: sytemd_networkd_setup
 
-    - name: Check if /etc/network/interfaces.d directory exists
-      ansible.builtin.stat:
-        path: /etc/network/interfaces.d
-      register: interfaces_stat
-      tags: sytemd_networkd_setup
+- name: Rename interfaces to interfaces.old if it exists
+  ansible.builtin.command: mv /etc/network/interfaces /etc/network/interfaces.old
+  become: true
+  when: interfaces_stat.exists is true
+  tags: sytemd_networkd_setup
 
-    - name: Rename interfaces to interfaces.old if it exists
-      ansible.builtin.command:
-        cmd: mv /etc/network/interfaces /etc/network/interfaces.old
-      become: true
-      when: interfaces_stat.stat.isfile
-      tags: sytemd_networkd_setup
+# - name: Check if /etc/network/interfaces.d directory exists
+#   ansible.builtin.stat:
+#     path: /etc/network/interfaces.d
+#   register: interfaces_d_stat
 
-    # - name: Check if /etc/network/interfaces.d directory exists
-    #   ansible.builtin.stat:
-    #     path: /etc/network/interfaces.d
-    #   register: interfaces_d_stat
+# - name: Rename files in /etc/network/interfaces.d/ to .old if directory exists
+#   ansible.builtin.command:
+#     cmd: >
+#       for file in /etc/network/interfaces.d/*; do
+#         mv "$file" "${file}.old";
+#       done
+#   become: true
+#   ignore_errors: true
+#   when: interfaces_d_stat.stat.isdir
+#   tags: rename_interfaces
 
-    # - name: Rename files in /etc/network/interfaces.d/ to .old if directory exists
-    #   ansible.builtin.command:
-    #     cmd: >
-    #       for file in /etc/network/interfaces.d/*; do
-    #         mv "$file" "${file}.old";
-    #       done
-    #   become: true
-    #   ignore_errors: true
-    #   when: interfaces_d_stat.stat.isdir
-    #   tags: rename_interfaces
+- name: Restart systemd-networkd to apply new configurations
+  ansible.builtin.command: networkctl reload
+  become: true
+  when: copy_result.changed
+  tags: sytemd_networkd_setup
 
-
-    - name: Restart systemd-networkd to apply new configurations
-      ansible.builtin.systemd:
-        name: systemd-networkd
-        state: restarted
-      tags: sytemd_networkd_setup
+# - name: Restart systemd-networkd to apply new configurations
+#   ansible.builtin.systemd:
+#     name: systemd-networkd
+#     state: restarted
+#   tags: sytemd_networkd_setup

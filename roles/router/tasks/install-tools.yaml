@@ -10,11 +10,11 @@
       - openssh-server
       - vim
       - btop
-      - exa
       - dnsutils
       - iperf3
       - nftables
       - man
+      - mc
       - zip
       - unzip
       - wget

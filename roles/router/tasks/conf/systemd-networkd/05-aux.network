@@ -8,6 +8,7 @@ Name=enp2s0
 
 [Link]
 Multicast=yes
+IPv4SendRedirects=yes
 
 [Network]
 Description=Simple Fallback Network for remote recovery on router 

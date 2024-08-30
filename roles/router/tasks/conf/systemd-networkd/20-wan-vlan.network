@@ -3,12 +3,12 @@
 # always make sure to refer to the correct mangpage for your system!
 [Match]
 # note that the .netdev for the vlan must be processed before this file!
-Name=enp1s0f0np0.10
+Name=wan
 
 [Link]
 # TODO: check
 #MTUBytes=1500
-Multicast=true
+Multicast=yes
 #AllMulticast=true
 # TODO: change to yes after intitial testing 
 RequiredForOnline=no
@@ -32,6 +32,7 @@ DHCP=yes
 IPForward=yes
 # The following settings might also be useful when your ISP does not want to delegate a Prefix, see manpage for detzails
 # IPv6ProxyNDP=
+DHCPPrefixDelegation=yes
 
 [DHCPv4]
 # Hostname sent in the DHCPv4 solicit (request). 
@@ -61,9 +62,11 @@ UseGateway=yes
 UseHostname=no
 UseDNS=no
 UseNTP=no
+PrefixDelegationHint=::/56
 
 [DHCPPrefixDelegation]
 UplinkInterface=:self
+SubnetId=0x01
 
 
 [IPv6AcceptRA]

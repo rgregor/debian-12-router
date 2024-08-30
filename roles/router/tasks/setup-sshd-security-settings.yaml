@@ -8,14 +8,14 @@
     state: present
   register: ssh_config
 
-# - name: Disable SSH Password Authentication
-#   become: true
-#   lineinfile:
-#     path: /etc/ssh/sshd_config
-#     regexp: "^#?PasswordAuthentication"
-#     line: "PasswordAuthentication no"
-#     state: present
-#   register: password_auth
+- name: Disable SSH Password Authentication
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^#?PasswordAuthentication"
+    line: "PasswordAuthentication no"
+    state: present
+  register: password_auth
 
 - name: Reload SSHD to apply changes
   become: true

@@ -4,6 +4,8 @@ Name=enp3s0
 
 [Link]
 ActivationPolicy=up
+IPv4SendRedirects=yes
+Multicast=yes
 
 [Network]
 Description=Secondary link to LAN, intended for connecting WiFI AP
@@ -34,6 +36,6 @@ Address=192.168.20.1/24
 EmitDNS=yes
 EmitDomains=yes
 
-[DHCPv6PrefixDelegation]
+[DHCPPrefixDelegation]
 # This assigns the second prefix from the pool.
-SubnetId=0x2
+SubnetId=0x20

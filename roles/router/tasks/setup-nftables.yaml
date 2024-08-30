@@ -1,21 +1,28 @@
 # code: language=ansible
 - name: Install nftables
+  become: true
   apt:
     name: nftables
     state: present
-  become: true
 
-- name: Copy nftables configuration file
+- name: Copy nftables flowtable configuration file
+  become: true
   ansible.builtin.copy:
-    src: conf/nftables.conf
-    dest: /etc/nftables.conf.new
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
     owner: root
     group: root
     mode: '0644'
-  become: true
+  with_items:
+    - { src: "conf/nftables.conf", dest: "/etc/nftables.conf.new" }
+    - { src: "conf/nftables.add-flowtable.conf", dest: "/etc/nftables.add-flowtable.conf.new" }
+  register: copy_nftables_config
 
 - name: Validate nftables configuration
-  ansible.builtin.command: nft -c -f /etc/nftables.conf.new
+  ansible.builtin.command: "nft -c -f {{ item.file }}"
+  with_items:
+    - { file: "/etc/nftables.conf.new" }
+    - { file: "/etc/nftables.add-flowtable.conf.new" }
   register: nftables_validation
   become: true
 
@@ -28,11 +35,37 @@
     group: root
     mode: '0644'
     backup: true
-  when: nftables_validation.rc == 0
+  with_items:
+    - { src: "/etc/nftables.conf.new", dest: "/etc/nftables.conf" }
+    - { src: "/etc/nftables.add-flowtable.conf.new", dest: "/etc/nftables.add-flowtable.conf" }
+  register: copy_main_config
+  #when: nftables_validation.rc == 0
   become: true
 
 - name: Restart nftables service to apply changes
+  become: true
   ansible.builtin.systemd:
     name: nftables
     state: restarted
+    enabled: true
+  when: copy_main_config.changed
+
+- name: Copy the new flowtable .service file to the remote machine
   become: true
+  ansible.builtin.copy:
+    src: "conf/nftables.add-flowtable.service"
+    dest: "/etc/systemd/system/nftables.add-flowtable.service"
+    mode: '0644'
+  register: copy_service
+
+- name: Reload systemd daemon to detect new service
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: true
+  when: copy_service.changed
+
+- name: Enable flowtable service
+  become: true
+  ansible.builtin.systemd:
+    name: nftables.add-flowtable.service
+    enabled: true
