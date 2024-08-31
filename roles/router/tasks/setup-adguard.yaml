@@ -1,0 +1,66 @@
+# code: language=ansible
+- name: Install and configure AdGuard Home
+  hosts: all
+  become: yes
+  tasks:
+    - name: Create 'adguard' user
+      user:
+        name: adguard
+        shell: /bin/false
+        create_home: no
+
+    - name: Install required packages (e.g., curl for downloading AdGuard Home)
+      apt:
+        name:
+          - curl
+        state: present
+        update_cache: yes
+
+    - name: Download AdGuard Home
+      get_url:
+        url: https://github.com/AdguardTeam/AdGuardHome/releases/latest/download/AdGuardHome_linux_amd64.tar.gz
+        dest: /tmp/AdGuardHome_linux_amd64.tar.gz
+
+    - name: Extract AdGuard Home
+      unarchive:
+        src: /tmp/AdGuardHome_linux_amd64.tar.gz
+        dest: /opt/
+        remote_src: yes
+
+    - name: Move AdGuard Home to its directory
+      command: mv /opt/AdGuardHome*/ /opt/adguardhome
+
+    - name: Copy AdGuard Home configuration file
+      copy:
+        src: /path/to/local/AdGuardHome.yaml
+        dest: /opt/adguardhome/AdGuardHome.yaml
+        owner: adguard
+        group: adguard
+        mode: '0644'
+
+    - name: Create a systemd service file for AdGuard Home
+      copy:
+        dest: /etc/systemd/system/adguardhome.service
+        content: |
+          [Unit]
+          Description=AdGuard Home
+          After=network.target
+
+          [Service]
+          User=adguard
+          Group=adguard
+          ExecStart=/opt/adguardhome/AdGuardHome -c /opt/adguardhome/AdGuardHome.yaml
+          Restart=on-failure
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd daemon
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable and start AdGuard Home service
+      systemd:
+        name: adguardhome
+        enabled: yes
+        state: started

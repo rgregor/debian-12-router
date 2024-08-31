@@ -1,0 +1,46 @@
+# code: language=ansible
+- name: Check if the authorized_keys file exists
+  ansible.builtin.stat:
+    path: /home/{{ ansible_user }}/.ssh/authorized_keys
+  register: authorized_keys_file
+
+- name: Check if authorized_keys file contains keys
+  ansible.builtin.command: wc -l /home/{{ ansible_user }}/.ssh/authorized_keys
+  when: authorized_keys_file.stat.exists
+  register: authorized_keys_count
+  changed_when: false
+
+- name: Debug output to show the number of keys
+  ansible.builtin.debug:
+    msg: "The authorized_keys file for {{ ansible_user }} contains {{ authorized_keys_count.stdout }} keys."
+  when: authorized_keys_file.stat.exists
+
+- name: Fail if no authorized keys are found
+  ansible.builtin.fail:
+    msg: "No SSH authorized keys are set up for the Ansible user {{ ansible_user }}."
+  when: authorized_keys_file.stat.exists and authorized_keys_count.stdout | int == 0
+
+- name: Disable Root SSH Login
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^#?PermitRootLogin"
+    line: "PermitRootLogin no"
+    state: present
+  register: ssh_config
+
+- name: Disable SSH Password Authentication
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^#?PasswordAuthentication"
+    line: "PasswordAuthentication no"
+    state: present
+  register: password_auth
+
+- name: Reload SSHD to apply changes
+  become: true
+  ansible.builtin.systemd:
+    name: ssh
+    state: reloaded
+  when: ssh_config.changed or password_auth.changed

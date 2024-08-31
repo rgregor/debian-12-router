@@ -1,22 +1,25 @@
 # code: language=ansible
 
-- name: Install necessary tools
-  ansible.builtin.import_tasks: install-tools.yaml
+# - name: Install necessary tools
+#   ansible.builtin.import_tasks: install-tools.yaml
 
-- name: Apply security settings
-  ansible.builtin.import_tasks: setup-sshd-security-settings.yaml
+# - name: Apply security settings
+#   ansible.builtin.import_tasks: limit-sshd-access.yaml
 
-- name: Set hostname and sysctl settings
-  ansible.builtin.import_tasks: setup-network-params.yaml
+# - name: Set hostname and sysctl settings
+#   ansible.builtin.import_tasks: setup-network-params.yaml
 
-- name: Install and configure systemd-networkd
-  ansible.builtin.import_tasks: setup-systemd-networkd.yaml
+# - name: Install and configure systemd-networkd
+#   ansible.builtin.import_tasks: setup-systemd-networkd.yaml
 
-- name: Install and configure dnsmasq
-  ansible.builtin.import_tasks: setup-dnsmasq.yaml
+# - name: Install and configure dnsmasq
+#   ansible.builtin.import_tasks: setup-dnsmasq.yaml
 
-- name: Install and configure nftables
-  ansible.builtin.import_tasks: setup-nftables.yaml
+# - name: Install and configure nftables
+#   ansible.builtin.import_tasks: setup-nftables.yaml
+
+- name: Limit systemd log size
+  ansible.builtin.import_tasks: limit-systemd-log-size.yaml
 
 #- name: Install Docker
  # ansible.builtin.import_tasks: install-docker.yaml
