@@ -38,9 +38,29 @@
     state: present
   register: password_auth
 
+- name: Configure sshd with custom settings
+  ansible.builtin.blockinfile:
+    path: /etc/ssh/sshd_config
+    marker: "# {mark} ANSIBLE MANAGED SSH HARDENING BLOCK"
+    block: |
+      # remote clients don't get told that we are running a specific debian version
+      DebianBanner no
+
+      # reduce allowed algorithms to those trusted by ssh-audit
+      # also reduces attacck surface by disabling older / rarely used implementations
+      # as a nice side effect, this breaks a lot of brute force bots
+      HostKeyAlgorithms ssh-ed25519
+      KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org
+      Ciphers chacha20-poly1305@openssh.com,aes128-gcm@openssh.com,aes256-gcm@openssh.com,aes128-ctr,aes192-ctr,aes256-ctr
+      MACs umac-128-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com
+    state: present
+    owner: root
+    mode: go-wx
+  register: ssh_hardening
+
 - name: Reload SSHD to apply changes
   become: true
   ansible.builtin.systemd:
     name: ssh
     state: reloaded
-  when: ssh_config.changed or password_auth.changed
+  when: ssh_config.changed or password_auth.changed or ssh_hardening.changed
