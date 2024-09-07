@@ -8,6 +8,14 @@
   ansible.builtin.import_tasks: limit-sshd-access.yaml
   tags: limit-sshd-access
 
+- name: Install and configure dnsmasq
+  ansible.builtin.import_tasks: setup-dnsmasq.yaml
+  tags: dnsmasq
+
+- name: Install and configure adguard
+  ansible.builtin.import_tasks: setup-adguard.yaml
+  tags: adguard
+
 - name: Set hostname and sysctl settings
   ansible.builtin.import_tasks: setup-network-params.yaml
   tags: network-params
@@ -15,10 +23,6 @@
 - name: Install and configure systemd-networkd
   ansible.builtin.import_tasks: setup-systemd-networkd.yaml
   tags: systemd-networkd
-
-- name: Install and configure dnsmasq
-  ansible.builtin.import_tasks: setup-dnsmasq.yaml
-  tags: dnsmasq
 
 - name: Install and configure chrony
   ansible.builtin.import_tasks: setup-chrony.yaml
@@ -31,6 +35,10 @@
 - name: Limit systemd log size
   ansible.builtin.import_tasks: limit-systemd-log-size.yaml
   tags: limit-logsize
+
+- name: Install and configure ntopng
+  ansible.builtin.import_tasks: setup-ntopng.yaml
+  tags: ntopng
 
 # - name: Setup DynDNS service
 #   ansible.builtin.import_tasks: setup-dyndns.yaml

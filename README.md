@@ -12,13 +12,13 @@
   - switched to Aguard Home as main DNS resolver
   - switched to using chrony NTP server/client with NTS (secure NTP) support
   - transparent intercepts for outgoing unencrypted DNS and NTP with dnat to router
+  - Use ntop-ng (community edition) to monitor traffic (with a nice Web UI)
   
 - ongoing TODOs
   - netcup DDNS setup
   - podman installation (remove any docker config)
   - add tasks for setting up BTRFS / snapper snapshots.. also for grub
   - modify ansible task to spawn Serial console on N100 ITX 
-  - add installation for ntopng
   - Setup Wireguard mesh to webserver / clients
   - install caddy http reverse proxy ?
   - Install / Setup Samba / NFS / SFTP

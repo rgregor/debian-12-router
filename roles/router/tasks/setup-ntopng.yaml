@@ -1,0 +1,49 @@
+# code: language=ansible
+---
+- name: Install ntopng on Debian 12
+  become: true
+  block:
+    - name: Install required dependencies for ntopng
+      ansible.builtin.apt:
+        name:
+          - gnupg
+          - software-properties-common
+        state: present
+        update_cache: true
+
+    - name: Add ntopng repository GPG key
+      ansible.builtin.apt_key:
+        url: https://packages.ntop.org/apt/ntop.key
+        state: present
+
+    - name: Download ntopng .deb package
+      ansible.builtin.get_url:
+        url: https://packages.ntop.org/apt/bookworm/all/apt-ntop.deb
+        dest: /tmp/apt-ntop.deb
+
+    - name: Install ntopng .deb package
+      ansible.builtin.apt:
+        deb: /tmp/apt-ntop.deb
+
+    - name: Clean up .deb package file
+      ansible.builtin.file:
+        path: /tmp/apt-ntop.deb
+        state: absent
+
+    - name: Install additional required packages
+      ansible.builtin.apt:
+        name:
+          - pfring-dkms
+          - nprobe
+          - ntopng
+          - n2disk
+          - cento
+          - ntap
+        state: present
+        update_cache: true
+
+    - name: Enable and start ntopng service
+      ansible.builtin.systemd:
+        name: ntopng
+        enabled: true
+        state: started
