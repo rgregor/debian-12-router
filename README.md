@@ -1,30 +1,29 @@
-# WIP: Ansible Debian 12 Router (Dualstack ipv4/ipV6, Nftables, Dnsmasq, Adguard, Netdata Monitoring, Wireguard on snapshotted BTRFS + NAS) This is my customization / Fork which adapts the following:
+# WIP: Ansible Debian 12 Router (IPv4/IPv6, Nftables, Systemd-networkd, Dnsmasq, Adguard, ntopng)
 
 - WARNING: CURRENTLY, THIS IS WORK IN PROGRESS
 
 - It is a heavy modification of : [this blog post](https://tongkl.com/building-a-router-from-scratch-part-1/)
+- but is developing towards an almost complete rewrite, main changes:
+  - Do not use bridging between local interfaces, instead rely on routing and firewall
+  - switched to systemd-networkd for interface bringup and all DHCPv4/v6 clients and IPv6 RAs
+  - in local nets, use IPv6 SLAAC only - but delegate Prefix obtained from ISP
+  - switch to two stage nftables setup with Flow offloading (it is much nice than iptables!) 
+  - Use dnsmasq as DHCPv4 Server and DNS resolver for local zones
+  - switched to Aguard Home as main DNS resolver
   
+- ongoing TODOs
+  - netcup DDNS setup
+  - podman installation (remove any docker config)
+  - add tasks for setting up BTRFS / snapper snapshots.. also for grub
+  - modify ansible task to spawn Serial console on N100 ITX 
+  - add installation for ntopng
+  - Setup Wireguard mesh to webserver / clients
+  - install caddy http reverse proxy ?
+  - Install / Setup Samba / NFS / SFTP
+  - automate install of smartmontools
 
-- TODO: adjusted to use Intel i225 + X710 dual fiber NICs on an Asrock N100DC-ITX
-- TODO: Switch to nftables, do not use / block iptables.. 
-- TODO: add tasks for setting up BTRFS / snapper snapshots.. also for grub
-- TODO: Swap Pihole for Adguard home (baremetall installation)
-- TODO: Use dnsmasq DHCP Server instead of isc (ISC is no longer maintained!)... use wide-dhcp client for upstream ipv6
-- TODO: modify ansible task to spawn Serial console on N100 ITX 
-- TODO: add tasks to install zsh / oh my zsh + tools for standard user
-- TODO: add installation for NEtdata
-- TODO: remove all bridge interfaces.. rely on firewall / routing only between different interfaces / vlans (for increased security and slightly more centralized setup)
-- TODO: Setup Wireguard mesh to webserver / clients
-- TODO: ? install caddy http reverse proxy ?
-- TODO: Install / Setup Samba / NFS / SFTP
-- TODO: msartd / smartmontools
-
-
-Curretnly hardcoded (you might want to search/replace them in the configs) if adapting to your system)
-hardcoded constants:
 
 ## networkinterfaces:
-
 
 ### enp0s0f0np0
  - not used, WAN interface without VLAN
@@ -38,10 +37,10 @@ hardcoded constants:
 ### enp3s0
  - secondary LAN itnerface, wired to access point
   
-### enp3s0.100
+### guest (aka enp3s0.100)
  - Guest WIFI VLAN (Wifi / SSID are configured on AP, not on the router)
   
-### enp3s0.100
+### ghetto (aka enp3s0.254)
  - Ghetto WiFI VLAN (Wifi/ SSID are configured on AP, not on the router)
 
 
@@ -57,7 +56,7 @@ hardcoded constants:
 - base template for Systemd IPv6 Prefix Delegation: https://blog.g3rt.nl/systemd-networkd-dhcpv6-pd-configuration.html
 
 ## nftables
-- Heavy inspiration from the genrated nftablöes ruleset of my previous OpenWRT router
+- Heavy inspiration from the genrated nftables ruleset of my previous OpenWRT router
 - He
 
 ## Chrony / NTP server
@@ -67,31 +66,8 @@ hardcoded constants:
 
 
 
-# Building A Router from Scratch with Debian 12
 
-An Ansible playbook that builds a router from scratch on Debian 12 in one command.
-
-This repo is the implementation of .
-
-## How to Run
-
-Clone this repo and open in an IDE. Use global find and replace to substitute the following fields:
-
-* `TIMEZONE_TO_BE_FILLED`: e.g. `America/Chicago`
-* `enp1s0f0np0`: the WAN port you want your router to use. e.g. `enp1s0`
-* `LAN_PORTS_LIST`: the LAN ports you want you router to use. e.g. `enp2s0 enp3s0 enp4s0`
-* `ULA_PREFIX_TO_BE_FILLED`: the ULA prefix you want to use in your LAN. e.g. `fd00::`. Do not put `/64` as it is in the config files already.
-* Go to `roles/router/tasks/conf/interfaces`. Replace these commented lines with your LAN ports:
-``` bash
-  # TODO: replace the following with your LAN ports
-  # up ip link set enp2s0 up
-  # up ip link set enp3s0 up
-  # up ip link set enp4s0 up
-```
-* Go to `inventory/group_vars/all/vars.yaml` and replace the user name with your preferred user name the router will use.
-* By default the Pi-hole admin portal is on port `8765`. Search and replace to whatever port you like.
-
-The Ansible configuration is now done.
+## Preconditions
 
 Perform a fresh install of Debian 12 on your future router. Give the user sudo privilege. Configure the router to have the static IP `192.168.10.1` on one of the LAN interfaces so that you can connect to it via `ssh`. Plug the WAN cable in the WAN port and configure it to use DHCP so the machine has Internet access. Install `python3` and `openssh-server` on the machine.
 
