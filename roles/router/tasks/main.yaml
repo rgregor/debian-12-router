@@ -20,6 +20,10 @@
   ansible.builtin.import_tasks: setup-dnsmasq.yaml
   tags: dnsmasq
 
+- name: Install and configure chrony
+  ansible.builtin.import_tasks: setup-chrony.yaml
+  tags: chrony
+
 - name: Install and configure nftables
   ansible.builtin.import_tasks: setup-nftables.yaml
   tags: nftables

@@ -1,6 +1,6 @@
 # WIP: Ansible Debian 12 Router (IPv4/IPv6, Nftables, Systemd-networkd, Dnsmasq, Adguard, ntopng)
 
-- WARNING: CURRENTLY, THIS IS WORK IN PROGRESS
+- WARNING: CURRENTLY, THIS IS WORK IN PROGRESSf
 
 - It is a heavy modification of : [this blog post](https://tongkl.com/building-a-router-from-scratch-part-1/)
 - but is developing towards an almost complete rewrite, main changes:
@@ -10,6 +10,8 @@
   - switch to two stage nftables setup with Flow offloading (it is much nice than iptables!) 
   - Use dnsmasq as DHCPv4 Server and DNS resolver for local zones
   - switched to Aguard Home as main DNS resolver
+  - switched to using chrony NTP server/client with NTS (secure NTP) support
+  - transparent intercepts for outgoing unencrypted DNS and NTP with dnat to router
   
 - ongoing TODOs
   - netcup DDNS setup
