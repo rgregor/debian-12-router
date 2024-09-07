@@ -4,8 +4,8 @@ Name=enp1s0f1np1
 
 [Link]
 ActivationPolicy=up
-IPv4SendRedirects=yes
 Multicast=yes
+RequiredForOnline=no
 
 [Network]
 Description=Primary LAN fibre Link to Ethernet Switch
@@ -17,10 +17,16 @@ IPv6SendRA=yes
 IPv6AcceptRA=no
 #Attempt to push Ipv6 Prefix
 DHCPv6PrefixDelegation=yes
+LLDP=true
+EmitLLDP=true
 
 [Address]
 # Simple static IPv4 configuration.
 Address=192.168.10.1/24
+
+[Address]
+# Static ULA
+Address=fd99:cafe:10::1/64
 
 #DHCPv4 Server settings
 [DHCPServer]

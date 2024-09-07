@@ -11,7 +11,9 @@ Name=wan
 Multicast=yes
 #AllMulticast=true
 # TODO: change to yes after intitial testing 
-RequiredForOnline=no
+RequiredForOnline=yes
+# report as online (e.g. systemd-networkd-wait-online.service) if we have IPv4 and IPv6 adresses configured
+RequiredFamilyForOnline=both
 ActivationPolicy=up
 
 [Network]
@@ -33,11 +35,15 @@ IPForward=yes
 # The following settings might also be useful when your ISP does not want to delegate a Prefix, see manpage for detzails
 # IPv6ProxyNDP=
 DHCPPrefixDelegation=yes
+# receive info from ISP Switch / router hardware, could be interresting
+LLDP=true  
+# <Paranoia>Don't leak unsolicted HW info to the ISP</Paranoia>
+EmitLLDP=false
 
 [DHCPv4]
 # Hostname sent in the DHCPv4 solicit (request). 
 # You may need to spoof something here if oyur ISP is very restrictive
-Hostname=nsa-prism-tap-v08-15
+Hostname=nsa-prism-tap-shareware-edition
 # You may need to spoof or use mac here
 #ClientIdentifier=duid
 #DUIDRawData=XXXX

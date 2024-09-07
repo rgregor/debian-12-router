@@ -2,6 +2,7 @@
 Description=Apply additional nftables configuration for flow offloading after all network devices have been created
 Requires=nftables.service network.target
 After=nftables.service network.target systemd-networkd-wait-online.service
+PartOf=nftables.service
 
 [Service]
 Type=oneshot

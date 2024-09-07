@@ -4,8 +4,8 @@ Name=guest
 
 [Link]
 ActivationPolicy=up
-IPv4SendRedirects=yes
 Multicast=yes
+RequiredForOnline=no
 
 [Network]
 Description=guest VLAN on secondary link to LAN, intended for connecting WiFI AP

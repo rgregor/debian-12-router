@@ -17,6 +17,7 @@
 - TODO: Setup Wireguard mesh to webserver / clients
 - TODO: ? install caddy http reverse proxy ?
 - TODO: Install / Setup Samba / NFS / SFTP
+- TODO: msartd / smartmontools
 
 
 Curretnly hardcoded (you might want to search/replace them in the configs) if adapting to your system)

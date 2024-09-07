@@ -8,7 +8,7 @@ Name=enp2s0
 
 [Link]
 Multicast=yes
-IPv4SendRedirects=yes
+RequiredForOnline=no
 
 [Network]
 Description=Simple Fallback Network for remote recovery on router 
@@ -18,3 +18,5 @@ Address=192.168.88.1/24
 #DNS=8.8.4.4
 # This option ensures that the interface is configured even is there no cable / link during bringup
 ConfigureWithoutCarrier=true
+LLDP=true
+EmitLLDP=true

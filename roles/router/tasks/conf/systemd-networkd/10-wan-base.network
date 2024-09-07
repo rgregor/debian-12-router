@@ -5,7 +5,7 @@ Name=enp1s0f0np0
 #Apply Settings here that are shared among VLANS
 [Link]
 #MTUBytes=1500
-ActivationPolicy=up
+ActivationPolicy=manual
 RequiredForOnline=no
 Multicast=yes
 #AllMulticast=true
@@ -15,16 +15,15 @@ Multicast=yes
 [Network]
 VLAN=wan
 # TODO disable next line after testing
-IPForward=yes
+# IPForward=yes
 # For Diagnostics, we may run a DHCPv4 Client here, make sure to disable it 
 DHCP=ipv4
 # we use dnsmasq instead as it has more meaningful option for a multi interface setup and DHCP/DNS interaction
 DHCPServer=no
 LinkLocalAddressing=ipv6
-DNSSEC=allow-downgrade
 # receive info from ISP Switch / router hardware, could be interresting
 LLDP=true  
-EmitLLDP=true
+EmitLLDP=false
 # Fallback Address, uncomment / edit to suit your network used during initial testing / bringup of the router in your existing network
 # Address=192.168.1.10
 

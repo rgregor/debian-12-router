@@ -4,8 +4,8 @@ Name=enp3s0
 
 [Link]
 ActivationPolicy=up
-IPv4SendRedirects=yes
 Multicast=yes
+RequiredForOnline=no
 
 [Network]
 Description=Secondary link to LAN, intended for connecting WiFI AP
@@ -19,10 +19,16 @@ IPv6SendRA=yes
 IPv6AcceptRA=no
 #Attempt to push Ipv6 Prefix
 DHCPv6PrefixDelegation=yes
+LLDP=true
+EmitLLDP=true
 
 [Address]
 # Simple static IPv4 configuration.
 Address=192.168.20.1/24
+
+[Address]
+# Static ULA
+Address=fd99:cafe:20::1/64
 
 #DHCPv4 Server settings
 # NOte: we use dnsmasq as DHCPv4 Server, as sytemd-networkd does not register DHCP hostnames to DNS without hassle
@@ -35,6 +41,7 @@ Address=192.168.20.1/24
 [IPv6SendRA]
 EmitDNS=yes
 EmitDomains=yes
+Emit
 
 [DHCPPrefixDelegation]
 # This assigns the second prefix from the pool.
