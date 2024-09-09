@@ -27,7 +27,7 @@
         owner: root
         group: root
         mode: '0644'
-        backup: yes
+        backup: true
       notify:
         - Restart chrony
 

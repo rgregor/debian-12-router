@@ -6,7 +6,7 @@
 
 - name: Configure sysctl settings
   become: true
-  sysctl:
+  ansible.builtin.sysctl:
     name: "{{ item.name }}"
     value: "{{ item.value }}"
     state: present
@@ -50,4 +50,3 @@
     - { name: 'net.ipv4.icmp_ignore_bogus_error_responses', value: '1' } # Ignore bogus ICMP error responses
     - { name: 'net.ipv4.conf.all.log_martians', value: '1' }     # Log packets with impossible addresses
     - { name: 'net.ipv4.conf.default.log_martians', value: '1' }
-    

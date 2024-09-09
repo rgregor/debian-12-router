@@ -1,7 +1,7 @@
 # code: language=ansible
 - name: Install tools
   become: true
-  apt:
+  ansible.builtin.apt:
     update_cache: true
     autoremove: true
     name:
@@ -29,6 +29,6 @@
     state: present
 
 - name: Perform full upgrade
-  command:
+  ansible.builtin.command:
     cmd: apt full-upgrade -y
   become: true
