@@ -42,8 +42,35 @@
         state: present
         update_cache: true
 
+    - name: Ensure block of lines is present in ntopng.conf
+      become: true
+      tasks:
+        - name: Ensure lines are in a block and marked as Ansible managed
+          ansible.builtin.blockinfile:
+            path: /etc/ntopng/ntopng.conf
+            marker: "# {mark} ANSIBLE MANAGED BLOCK"
+            block: |
+              --community # don't warn about expired entprise test license
+              -S=local # keep idle local hosts forever
+              # explicetely state interfaces (no loopback)
+              -i enp1s0f0np0
+              -i enp1s0f1np1
+              -i enp2s0
+              -i enp3s0
+              -i wan
+              -i guest
+              -i ghetto
+            create: true
+
     - name: Enable and start ntopng service
       ansible.builtin.systemd:
         name: ntopng
         enabled: true
         state: started
+
+    # only keep this enabled if you want to forward to a remote monitoring system
+    - name: Disable and stop nprobe
+      ansible.builtin.systemd:
+        name: nprobe
+        enabled: false
+        state: stopped
