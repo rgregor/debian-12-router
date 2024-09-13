@@ -1,3 +1,5 @@
 {
-    "ansible.python.interpreterPath": "/opt/homebrew/bin/python3"
+    "ansible.python.interpreterPath": "/bin/python3",
+    "ansible.validation.lint.enabled": true,
+    "ansible.validation.lint.arguments": "-c ./.ansible-lint.yaml"
 }

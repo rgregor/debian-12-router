@@ -1,0 +1,45 @@
+---
+# code: language=ansible
+- name: Install required packages
+  ansible.builtin.apt:
+    name:
+      - cryptsetup
+    state: present
+  become: true
+
+- name: Create directory for LUKS header backups
+  ansible.builtin.file:
+    path: "{{ header_backup_dir }}"
+    state: directory
+    mode: "0700"
+  become: true
+
+- name: Set up LUKS encryption on devices
+  ansible.builtin.command: >
+    cryptsetup luksFormat
+    --type luks2
+    --cipher aes-xts-plain64
+    --key-size 256
+    --hash sha256
+    --key-file {{ key_file }}
+    {{ item }}
+  with_items:
+    - "{{ device1 }}"
+    - "{{ device2 }}"
+  become: true
+
+- name: Backup LUKS headers
+  ansible.builtin.command: >
+    cryptsetup luksHeaderBackup {{ item.device }}
+      --header-backup-file {{ header_backup_dir }}/luks_header_{{ item.device | basename }}.img
+  with_items:
+    - { device: "{{ device1 }}" }
+    - { device: "{{ device2 }}" }
+  become: true
+
+- name: Open encrypted devices
+  ansible.builtin.command: cryptsetup open --type luks --key-file {{ key_file }} --allow-discards {{ item.device }} {{ mapper_name }}{{ item.index }}
+  with_items:
+    - { device: "{{ device1 }}", index: 1 }
+    - { device: "{{ device2 }}", index: 2 }
+  become: true

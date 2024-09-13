@@ -1,0 +1,18 @@
+[GeneralConfig]
+# see https://docs.python.org/3.11/library/logging.html#logging-levels
+log_level = 20
+
+[NetcupAPIConfig]
+api_key = {{ router_netcup_api_key }}
+api_password = {{ router_netcup_api_password }}
+customer = {{ router_netcup_customer }}
+# timeout = 3
+
+[DDNSConfig]
+#poll_interval_s = 30.0
+domain = {{ router_netcup_domain }}
+subdomain = {{ router_netcup_subdomain }}
+# note that netcup-ddns will use the first match in the stdouts of the commands below to determine a globally routable IPv4 / IPv6 address
+# replace dev wan with the actual name of your wan facing network interface
+fetch_ip4_cmd = "ip -4 addr show dev wan | grep -oP 'inet \\K[\\d.]+(?=/\\d+.*scope global)'"
+fetch_ip6_cmd = "ip -6 addr show dev wan | grep 'inet6 .* scope global .* noprefixroute'"

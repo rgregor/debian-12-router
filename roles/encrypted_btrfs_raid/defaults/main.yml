@@ -1,0 +1,18 @@
+---
+data_raid_mode: raid0
+metadata_raid_mode: raid1
+device1: /dev/sda3
+device2: /dev/sdb3
+mapper_name: ssd_raid_crypt
+# if your / or home partitions are also snapshotted you might not want to place the key there, not even temporarily
+key_file: /secrets/data_raid.key
+generate_new_key: true
+# change this to some persistent location after testing / debugging
+header_backup_dir: /secrets/luks_backup
+mount_point: /srv
+# note: compressions is likely to improve performance on SATA SSDs when using modern CPUs
+subvolumes:
+  - { name: "@data", mountpoint: /srv/data, options: "subvol=@,defaults,relatime,lazytime,compress=zstd:3" }
+  - { name: "@backup", mountpoint: srv/backup/, options: "subvol=@backup,defaults,relatime,lazytime,compress=zstd:3" }
+  - { name: "@vm", mountpoint: /srv/vm, options: "subvol=@vm,defaults,nodatacow,noatime,lazytime,compress=zstd:1" }
+  - { name: "@scratch", mountpoint: srv/scratch/, options: "subvol=@scratch,defaults,noatime,lazytime,nodatacow,ompress=zstd:3" }

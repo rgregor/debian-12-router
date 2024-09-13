@@ -1,0 +1,9 @@
+---
+use_default_rules: true
+parseable: true
+warn_list: # or 'skip_list' to completely ignore
+  # - '204'  # Lines should be no longer than 160 chars
+  - no-changed-when # Commands should not change things if nothing needs doing
+  - no-handler
+  - var-naming
+  # - 'command-instead-of-module'  # Using command rather than module

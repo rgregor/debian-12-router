@@ -1,0 +1,13 @@
+# code: language=ansible
+# this file contains task parameters that are not critical for the system security
+# other variables should be placed in router_secrets_vault.yaml
+# this includes:
+#  - adguard web interface username and password hash
+#  - ddns api credentials (i.e. Netcup DDNS API key, customer number, password, public domain and subdomain names for the netcup-ddns tool)
+
+---
+# these usernames ferer to custom user accounts that are created in order to drop privileges
+ddns_client_system_user: ddnsclient
+ddns_client_path: /opt/netcup-ddns
+
+adguard_system_user: adguard

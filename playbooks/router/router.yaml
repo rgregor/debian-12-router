@@ -1,9 +1,0 @@
-- name: Initialize router roles
-  hosts: router
-  vars_files: router_secrets_vault.yaml
-  vars:
-    ansible_become_pass: "{{ router_become_password }}"
-  roles:
-    - router
-
-#- import_playbook: pi-hole/main.yaml

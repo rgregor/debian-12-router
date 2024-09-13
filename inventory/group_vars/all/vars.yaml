@@ -1,6 +1,6 @@
 # code: language=ansible
 ---
-# this is to not leak semi-private information to hte git repo
+# this is to not leak semi-private information to the git repo
 # basically, this will use the current local user as the username on remote machines as well
 # this is disabled in favor of playbook specific encrypted vaults
 # ansible_user: "{{ lookup('env', 'USER') }}"

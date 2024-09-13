@@ -1,66 +1,64 @@
+---
 # code: language=ansible
-- name: Install and configure AdGuard Home
-  hosts: all
-  become: yes
-  tasks:
-    - name: Create 'adguard' user
-      user:
-        name: adguard
-        shell: /bin/false
-        create_home: no
+- name: Create 'adguard' user
+  ansible.builtin.user:
+    name: adguard
+    shell: /bin/false
+    create_home: false
 
-    - name: Install required packages (e.g., curl for downloading AdGuard Home)
-      apt:
-        name:
-          - curl
-        state: present
-        update_cache: yes
+- name: Install required packages (e.g., curl for downloading AdGuard Home)
+  ansible.builtin.apt:
+    name:
+      - curl
+    state: present
+    update_cache: true
 
-    - name: Download AdGuard Home
-      get_url:
-        url: https://github.com/AdguardTeam/AdGuardHome/releases/latest/download/AdGuardHome_linux_amd64.tar.gz
-        dest: /tmp/AdGuardHome_linux_amd64.tar.gz
+- name: Download AdGuard Home
+  ansible.builtin.get_url:
+    url: https://github.com/AdguardTeam/AdGuardHome/releases/latest/download/AdGuardHome_linux_amd64.tar.gz
+    dest: /tmp/AdGuardHome_linux_amd64.tar.gz
+    mode: "0600"
 
-    - name: Extract AdGuard Home
-      unarchive:
-        src: /tmp/AdGuardHome_linux_amd64.tar.gz
-        dest: /opt/
-        remote_src: yes
+- name: Extract AdGuard Home
+  ansible.builtin.unarchive:
+    src: /tmp/AdGuardHome_linux_amd64.tar.gz
+    dest: /opt/
+    remote_src: true
 
-    - name: Move AdGuard Home to its directory
-      command: mv /opt/AdGuardHome*/ /opt/adguardhome
+- name: Move AdGuard Home to its directory
+  ansible.builtin.command: mv /opt/AdGuardHome*/ /opt/adguardhome
+- name: Copy AdGuard Home configuration file
+  ansible.builtin.copy:
+    src: /path/to/local/AdGuardHome.yaml
+    dest: /opt/adguardhome/AdGuardHome.yaml
+    owner: adguard
+    group: adguard
+    mode: "0600"
 
-    - name: Copy AdGuard Home configuration file
-      copy:
-        src: /path/to/local/AdGuardHome.yaml
-        dest: /opt/adguardhome/AdGuardHome.yaml
-        owner: adguard
-        group: adguard
-        mode: '0644'
+- name: Create a systemd service file for AdGuard Home
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/adguardhome.service
+    content: |
+      [Unit]
+      Description=AdGuard Home
+      After=network.target
 
-    - name: Create a systemd service file for AdGuard Home
-      copy:
-        dest: /etc/systemd/system/adguardhome.service
-        content: |
-          [Unit]
-          Description=AdGuard Home
-          After=network.target
+      [Service]
+      User=adguard
+      Group=adguard
+      ExecStart=/opt/adguardhome/AdGuardHome -c /opt/adguardhome/AdGuardHome.yaml
+      Restart=on-failure
 
-          [Service]
-          User=adguard
-          Group=adguard
-          ExecStart=/opt/adguardhome/AdGuardHome -c /opt/adguardhome/AdGuardHome.yaml
-          Restart=on-failure
+      [Install]
+      WantedBy=multi-user.target
+    mode: "0644"
 
-          [Install]
-          WantedBy=multi-user.target
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
 
-    - name: Reload systemd daemon
-      systemd:
-        daemon_reload: yes
-
-    - name: Enable and start AdGuard Home service
-      systemd:
-        name: adguardhome
-        enabled: yes
-        state: started
+- name: Enable and start AdGuard Home service
+  ansible.builtin.systemd:
+    name: adguardhome
+    enabled: true
+    state: started

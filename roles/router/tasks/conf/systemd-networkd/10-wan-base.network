@@ -1,4 +1,4 @@
-# basic link configuration for 
+# basic link configuration for
 [Match]
 Name=enp1s0f0np0
 
@@ -16,20 +16,20 @@ Multicast=yes
 VLAN=wan
 # TODO disable next line after testing
 # IPForward=yes
-# For Diagnostics, we may run a DHCPv4 Client here, make sure to disable it 
+# For Diagnostics, we may run a DHCPv4 Client here, make sure to disable it
 DHCP=ipv4
 # we use dnsmasq instead as it has more meaningful option for a multi interface setup and DHCP/DNS interaction
 DHCPServer=no
 LinkLocalAddressing=ipv6
 # receive info from ISP Switch / router hardware, could be interresting
-LLDP=true  
+LLDP=true
 EmitLLDP=false
 # Fallback Address, uncomment / edit to suit your network used during initial testing / bringup of the router in your existing network
 # Address=192.168.1.10
 
 
 [DHCPv4]
-# Hostname sent in the DHCPv4 solicit (request). 
+# Hostname sent in the DHCPv4 solicit (request).
 # You may need to spoof something here if oyur ISP is very restrictive
 # You may need to spoof or use mac here
 #ClientIdentifier=duid

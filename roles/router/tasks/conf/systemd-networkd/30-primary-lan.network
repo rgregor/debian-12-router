@@ -1,4 +1,4 @@
-#Intel X710, second NIC, 10G Fibre 
+#Intel X710, second NIC, 10G Fibre
 [Match]
 Name=enp1s0f1np1
 
@@ -43,4 +43,3 @@ EmitDomains=yes
 UplinkInterface=:auto
 # This assigns the second prefix from the pool.
 SubnetId=0x10
-

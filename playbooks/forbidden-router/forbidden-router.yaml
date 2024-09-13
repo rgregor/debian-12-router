@@ -1,0 +1,11 @@
+---
+# code: language=ansible
+- name: Setup Router after Debian 12 Base installation
+  hosts: router
+  vars_files: router_secrets_vault.yaml
+  vars:
+    ansible_become_pass: "{{ router_become_password }}"
+  roles:
+    #   - router
+    - encrypted_btrfs_raid
+#   - nas

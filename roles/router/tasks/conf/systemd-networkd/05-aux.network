@@ -1,7 +1,7 @@
 # THis is a fallback interface, configured to be as simple as possible
 # it is inteneded as an emergency / fallback solution
-# On my machine this uses a rather mediocre onboard Realtek RTL8111H NIC which tends 
-# to be unreliable for high bandwidth transfers when using the stock R8169 kernel module 
+# On my machine this uses a rather mediocre onboard Realtek RTL8111H NIC which tends
+# to be unreliable for high bandwidth transfers when using the stock R8169 kernel module
 # and not completely broken powersave settings
 [Match]
 Name=enp2s0
@@ -11,7 +11,7 @@ Multicast=yes
 RequiredForOnline=no
 
 [Network]
-Description=Simple Fallback Network for remote recovery on router 
+Description=Simple Fallback Network for remote recovery on router
 Address=192.168.88.1/24
 #Gateway=192.168.1.1
 #DNS=8.8.8.8

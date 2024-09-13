@@ -1,3 +1,4 @@
+---
 # code: language=ansible
 - name: Set hostname
   become: true
@@ -6,47 +7,47 @@
 
 - name: Configure sysctl settings
   become: true
-  ansible.builtin.sysctl:
+  ansible.posix.sysctl:
     name: "{{ item.name }}"
     value: "{{ item.value }}"
     state: present
     sysctl_set: true
     reload: true
   loop:
-    - { name: 'net.ipv4.ip_forward', value: '1' }
-    - { name: 'net.ipv6.conf.all.forwarding', value: '1' }
-    - { name: 'net.ipv4.conf.all.rp_filter', value: '1' }
-    - { name: 'net.ipv4.conf.default.rp_filter', value: '1' }
-    - { name: 'net.ipv4.conf.all.accept_redirects', value: '0' }
-    - { name: 'net.ipv6.conf.all.accept_redirects', value: '0' }
-    - { name: 'net.ipv4.conf.all.accept_source_route', value: '0' }
-    - { name: 'net.ipv6.conf.all.accept_source_route', value: '0' }
-    - { name: 'net.ipv4.conf.default.accept_source_route', value: '0' }
-    - { name: 'net.ipv6.conf.default.accept_source_route', value: '0' }
-    - { name: 'net.ipv4.conf.all.send_redirects', value: '0' } # enable this only on LAN in systemd-networkd
-    - { name: 'net.ipv4.conf.default.send_redirects', value: '0' }
-    - { name: 'net.ipv6.conf.all.autoconf', value: '0' }
-    - { name: 'net.ipv6.conf.default.autoconf', value: '0' }
-    - { name: 'net.ipv6.conf.all.accept_ra', value: '0' }        # Disables RA acceptance globally, reenable in systemd-networkd config on specific interfaces!
-    - { name: 'net.ipv6.conf.default.accept_ra', value: '0' }    # Disables RA acceptance by default
-    - { name: 'net.ipv6.conf.all.accept_ra_defrtr', value: '1' } # note that default router can only be accepted if if RAs are accepted
-    - { name: 'net.ipv6.conf.default.accept_ra_defrtr', value: '1' }
-    - { name: 'net.ipv6.conf.all.accept_ra_pinfo', value: '1' }  # note that prefix info is accepted only if RAs are accepted
-    - { name: 'net.ipv6.conf.default.accept_ra_pinfo', value: '1' }
-    - { name: 'net.ipv6.conf.all.accept_ra_rtr_pref', value: '0' } # Disable acceptance of router preference via RA
-    - { name: 'net.ipv6.conf.default.accept_ra_rtr_pref', value: '0' }
-    - { name: 'net.ipv4.conf.all.arp_filter', value: '1' }      # slightly harden against ARP/Mac spoofing
-    - { name: 'net.ipv4.conf.all.arp_ignore', value: '2' }
-    - { name: 'net.ipv4.conf.all.arp_announce', value: '2' }
-    - { name: 'net.ipv4.conf.default.arp_filter', value: '1' }
-    - { name: 'net.ipv4.conf.default.arp_ignore', value: '2' }
-    - { name: 'net.ipv4.conf.default.arp_announce', value: '2' }
-    - { name: 'net.ipv6.conf.all.dad_transmits', value: '1' }     # Number of DAD transmissions
-    - { name: 'net.ipv6.conf.default.dad_transmits', value: '1' }
-    - { name: 'net.ipv6.conf.all.proxy_ndp', value: '0' }        # Do not proxy neighbour discovery by default
-    - { name: 'net.ipv6.conf.default.proxy_ndp', value: '0' }    # (could be useful as clutch if IPv6 routes do net get propagated - set in systemd-networkd)
-    - { name: 'net.ipv4.tcp_syncookies', value: '1' }            # Enable TCP SYN cookies
-    - { name: 'net.ipv4.icmp_echo_ignore_broadcasts', value: '1' } # Ignore ICMP echo requests sent to broadcast addresses
-    - { name: 'net.ipv4.icmp_ignore_bogus_error_responses', value: '1' } # Ignore bogus ICMP error responses
-    - { name: 'net.ipv4.conf.all.log_martians', value: '1' }     # Log packets with impossible addresses
-    - { name: 'net.ipv4.conf.default.log_martians', value: '1' }
+    - { name: net.ipv4.ip_forward, value: "1" }
+    - { name: net.ipv6.conf.all.forwarding, value: "1" }
+    - { name: net.ipv4.conf.all.rp_filter, value: "1" }
+    - { name: net.ipv4.conf.default.rp_filter, value: "1" }
+    - { name: net.ipv4.conf.all.accept_redirects, value: "0" }
+    - { name: net.ipv6.conf.all.accept_redirects, value: "0" }
+    - { name: net.ipv4.conf.all.accept_source_route, value: "0" }
+    - { name: net.ipv6.conf.all.accept_source_route, value: "0" }
+    - { name: net.ipv4.conf.default.accept_source_route, value: "0" }
+    - { name: net.ipv6.conf.default.accept_source_route, value: "0" }
+    - { name: net.ipv4.conf.all.send_redirects, value: "0" } # enable this only on LAN in systemd-networkd
+    - { name: net.ipv4.conf.default.send_redirects, value: "0" }
+    - { name: net.ipv6.conf.all.autoconf, value: "0" }
+    - { name: net.ipv6.conf.default.autoconf, value: "0" }
+    - { name: net.ipv6.conf.all.accept_ra, value: "0" } # Disables RA acceptance globally, re-enable in systemd-networkd config on specific interfaces!
+    - { name: net.ipv6.conf.default.accept_ra, value: "0" } # Disables RA acceptance by default
+    - { name: net.ipv6.conf.all.accept_ra_defrtr, value: "1" } # note that default router can only be accepted if if RAs are accepted
+    - { name: net.ipv6.conf.default.accept_ra_defrtr, value: "1" }
+    - { name: net.ipv6.conf.all.accept_ra_pinfo, value: "1" } # note that prefix info is accepted only if RAs are accepted
+    - { name: net.ipv6.conf.default.accept_ra_pinfo, value: "1" }
+    - { name: net.ipv6.conf.all.accept_ra_rtr_pref, value: "0" } # Disable acceptance of router preference via RA
+    - { name: net.ipv6.conf.default.accept_ra_rtr_pref, value: "0" }
+    - { name: net.ipv4.conf.all.arp_filter, value: "1" } # slightly harden against ARP/Mac spoofing
+    - { name: net.ipv4.conf.all.arp_ignore, value: "2" }
+    - { name: net.ipv4.conf.all.arp_announce, value: "2" }
+    - { name: net.ipv4.conf.default.arp_filter, value: "1" }
+    - { name: net.ipv4.conf.default.arp_ignore, value: "2" }
+    - { name: net.ipv4.conf.default.arp_announce, value: "2" }
+    - { name: net.ipv6.conf.all.dad_transmits, value: "1" } # Number of DAD transmissions
+    - { name: net.ipv6.conf.default.dad_transmits, value: "1" }
+    - { name: net.ipv6.conf.all.proxy_ndp, value: "0" } # Do not proxy neighbour discovery by default
+    - { name: net.ipv6.conf.default.proxy_ndp, value: "0" } # (could be useful as clutch if IPv6 routes do net get propagated - set in systemd-networkd)
+    - { name: net.ipv4.tcp_syncookies, value: "1" } # Enable TCP SYN cookies
+    - { name: net.ipv4.icmp_echo_ignore_broadcasts, value: "1" } # Ignore ICMP echo requests sent to broadcast addresses
+    - { name: net.ipv4.icmp_ignore_bogus_error_responses, value: "1" } # Ignore bogus ICMP error responses
+    - { name: net.ipv4.conf.all.log_martians, value: "1" } # Log packets with impossible addresses
+    - { name: net.ipv4.conf.default.log_martians, value: "1" }

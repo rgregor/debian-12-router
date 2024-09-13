@@ -6,7 +6,7 @@ PartOf=nftables.service
 
 [Service]
 Type=oneshot
-ExecStart=/usr/sbin/nft -f /etc/nftables.add-flowtable.conf
+ExecStart=/usr/sbin/nft -f /etc/nftables.insert-flowtable.conf
 RemainAfterExit=yes
 
 [Install]

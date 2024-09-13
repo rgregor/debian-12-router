@@ -1,0 +1,25 @@
+---
+# code: language=ansible
+- name: Check if encryption key exists
+  ansible.builtin.stat:
+    path: "{{ key_file }}"
+  register: key_file_stat
+
+- name: Generate encryption key
+  ansible.builtin.command: dd if=/dev/urandom of={{ key_file }} bs=32 count=1
+  become: true
+  when:
+    - generate_new_key | bool
+
+- name: Ensure encryption key exists
+  ansible.builtin.file:
+    path: "{{ key_file }}"
+    state: file
+  become: true
+  when: not generate_new_key | bool
+
+- name: Set permissions on key file
+  ansible.builtin.file:
+    path: "{{ key_file }}"
+    mode: "0400"
+  become: true

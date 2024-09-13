@@ -1,10 +1,11 @@
+---
 # code: language=ansible
 - name: Ensure journald configuration directory exists
   become: true
   ansible.builtin.file:
     path: /etc/systemd/journald.conf.d
     state: directory
-    mode: '0755'
+    mode: "0755"
 
 - name: Enforce maximum log size in journald
   become: true
@@ -16,7 +17,7 @@
       SystemMaxFileSize=100M
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   register: journald_conf
 
 - name: Restart systemd-journald to apply changes

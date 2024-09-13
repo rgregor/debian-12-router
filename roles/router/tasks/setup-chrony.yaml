@@ -1,44 +1,36 @@
-# code: language=ansible
 ---
-- name: Install and configure Chrony NTP on Debian 12
-  hosts: all
+# code: language=ansible
+- name: Ensure other time synchronization mechanisms are disabled
   become: true
-  tasks:
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: false
+    state: stopped
+  loop:
+    - systemd-timesyncd
+    - ntp
 
-    - name: Ensure other time synchronization mechanisms are disabled
-      ansible.builtin.systemd:
-        name: "{{ item }}"
-        enabled: false
-        state: stopped
-      loop:
-        - systemd-timesyncd
-        - ntp
+- name: Install Chrony package
+  become: true
+  ansible.builtin.apt:
+    name: chrony
+    state: present
+    update_cache: true
 
-    - name: Install Chrony package
-      ansible.builtin.apt:
-        name: chrony
-        state: present
-        update_cache: true
+- name: Deploy custom chrony.conf file
+  become: true
+  ansible.builtin.copy:
+    src: conf/chrony.conf # Adjust the path to where your file is located
+    dest: /etc/chrony/chrony.conf
+    owner: root
+    group: root
+    mode: "0644"
+    backup: true
+  notify:
+    - Restart chrony
 
-    - name: Deploy custom chrony.conf file
-      ansible.builtin.copy:
-        src: conf/chrony.conf   # Adjust the path to where your file is located
-        dest: /etc/chrony/chrony.conf
-        owner: root
-        group: root
-        mode: '0644'
-        backup: true
-      notify:
-        - Restart chrony
-
-    - name: Enable and start chrony service
-      ansible.builtin.systemd:
-        name: chrony
-        enabled: true
-        state: started
-
-  handlers:
-    - name: Restart chrony
-      ansible.builtin.systemd:
-        name: chrony
-        state: restarted
+- name: Restart chrony
+  become: true
+  ansible.builtin.systemd:
+    name: chrony
+    state: restarted

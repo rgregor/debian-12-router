@@ -10,7 +10,7 @@ Name=wan
 #MTUBytes=1500
 Multicast=yes
 #AllMulticast=true
-# TODO: change to yes after intitial testing 
+# TODO: change to yes after intitial testing
 RequiredForOnline=yes
 # report as online (e.g. systemd-networkd-wait-online.service) if we have IPv4 and IPv6 addresses configured
 RequiredFamilyForOnline=both
@@ -36,12 +36,12 @@ IPForward=yes
 # IPv6ProxyNDP=
 DHCPPrefixDelegation=yes
 # receive info from ISP Switch / router hardware, could be interresting
-LLDP=true  
+LLDP=true
 # <Paranoia>Don't leak unsolicted HW info to the ISP</Paranoia>
 EmitLLDP=false
 
 [DHCPv4]
-# Hostname sent in the DHCPv4 solicit (request). 
+# Hostname sent in the DHCPv4 solicit (request).
 # You may need to spoof something here if your ISP is very restrictive
 Hostname=nsa-prism-tap-shareware-edition
 # You may need to spoof or use mac here
@@ -58,7 +58,7 @@ UseGateway=yes
 
 
 [DHCPv6]
-# The following might be required to request a prefix, when the ISP RA does not "mention" it via a set flag for 
+# The following might be required to request a prefix, when the ISP RA does not "mention" it via a set flag for
 # "managed" or "other configuration"
 # WithoutRA=solicit
 # the similar option below seems deprecated / undocumented for Debian 12
@@ -83,4 +83,3 @@ UseDNS=no
 # indicates it's not required.
 # consider setting it to always to force it, even if ISP RA has no flags set for it
 DHCPv6Client=true
-

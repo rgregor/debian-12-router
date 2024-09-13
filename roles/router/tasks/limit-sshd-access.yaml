@@ -1,3 +1,4 @@
+---
 # code: language=ansible
 - name: Check if the authorized_keys file exists
   ansible.builtin.stat:
@@ -12,20 +13,20 @@
 
 - name: Debug output to show the number of keys
   ansible.builtin.debug:
-    msg: "The authorized_keys file for {{ ansible_user }} contains {{ authorized_keys_count.stdout }} keys."
+    msg: The authorized_keys file for {{ ansible_user }} contains {{ authorized_keys_count.stdout }} keys.
   when: authorized_keys_file.stat.exists
 
 - name: Fail if no authorized keys are found
   ansible.builtin.fail:
-    msg: "No SSH authorized keys are set up for the Ansible user {{ ansible_user }}."
+    msg: No SSH authorized keys are set up for the Ansible user {{ ansible_user }}.
   when: authorized_keys_file.stat.exists and authorized_keys_count.stdout | int == 0
 
 - name: Disable Root SSH Login
   become: true
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
-    regexp: "^#?PermitRootLogin"
-    line: "PermitRootLogin no"
+    regexp: ^#?PermitRootLogin
+    line: PermitRootLogin no
     state: present
   register: ssh_config
 
@@ -33,8 +34,8 @@
   become: true
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
-    regexp: "^#?PasswordAuthentication"
-    line: "PasswordAuthentication no"
+    regexp: ^#?PasswordAuthentication
+    line: PasswordAuthentication no
     state: present
   register: password_auth
 

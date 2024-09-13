@@ -1,3 +1,4 @@
+---
 # code: language=ansible
 
 - name: Check the status of the nginx service
@@ -13,7 +14,7 @@
     dest: /etc/systemd/network/
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   register: copy_result
   tags: sytemd_networkd_setup
 
@@ -50,7 +51,6 @@
   become: true
   when: copy_result.changed
   tags: sytemd_networkd_setup
-
 # - name: Restart systemd-networkd to apply new configurations
 #   ansible.builtin.systemd:
 #     name: systemd-networkd

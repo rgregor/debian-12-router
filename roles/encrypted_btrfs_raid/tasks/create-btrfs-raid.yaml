@@ -1,0 +1,52 @@
+---
+# code: language=ansible
+- name: Install required packages
+  ansible.builtin.apt:
+    name:
+      - btrfs-progs
+    state: present
+  become: true
+
+- name: Create BTRFS RAID
+  ansible.builtin.command: >
+    mkfs.btrfs -d {{ data_raid_mode }}
+    -m {{ metadata_raid_mode }}
+    /dev/mapper/{{ mapper_name }}1
+    /dev/mapper/{{ mapper_name }}2
+  become: true
+
+- name: Create mount point
+  ansible.builtin.file:
+    path: "{{ mount_point }}"
+    state: directory
+    mode: "0644"
+  become: true
+
+- name: Mount BTRFS filesystem
+  ansible.posix.mount:
+    path: "{{ mount_point }}"
+    src: /dev/mapper/{{ mapper_name }}1
+    fstype: btrfs
+    state: mounted
+  become: true
+
+- name: Create subvolumes
+  ansible.builtin.command: btrfs subvolume create {{ mount_point }}/{{ item.name }}
+  with_items: "{{ subvolumes }}"
+  become: true
+
+- name: Unmount BTRFS filesystem
+  ansible.posix.mount:
+    path: "{{ mount_point }}"
+    state: unmounted
+  become: true
+
+- name: Mount subvolumes
+  ansible.posix.mount:
+    path: "{{ mount_point }}{{ item.mountpoint }}"
+    src: /dev/mapper/{{ mapper_name }}1
+    fstype: btrfs
+    opts: "{{ item.options }}"
+    state: mounted
+  with_items: "{{ subvolumes }}"
+  become: true

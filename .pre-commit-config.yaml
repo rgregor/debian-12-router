@@ -1,0 +1,53 @@
+---
+default_stages: [commit, push]
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-added-large-files
+      - id: detect-private-key
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+     # - id: check-toml
+     # - id: check-shebang-scripts-are-executable
+
+  - repo: https://github.com/ansible-community/ansible-lint
+    rev: v24.9.0
+    hooks:
+      - id: ansible-lint
+        entry: >
+          ansible-lint
+          --fix
+          --config-file=.ansible-lint.yaml
+        files: \.(yaml|yml)$
+        additional_dependencies:
+          - ansible
+
+  # the "mainline" shellcheck precommit hook requires docker installed (WTF?!).. so we use this one.. (also: I like to use podman)
+  - repo: https://github.com/shellcheck-py/shellcheck-py.git
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+        args:
+          - --color=always # Enable colored output
+          - --format=gcc # Use detailed output format
+          - --shell=bash # Specify shell dialect (adjust if needed)
+          - --severity=style # Report even style issues
+          - -x # explain
+          - -V # be really verbose
+        files: \.(sh|bash)$
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+      # don't use on yaml... (changes oscillate with ansible-lint o_0)
+        files: \.(sh|md|txt|cfg)$
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.3.0
+    hooks:
+      - id: codespell
+        args: [--write-changes, --ignore-words=.codespell-ignore]
+        files: \.(yaml|yml|md|txt|sh)$

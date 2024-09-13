@@ -1,0 +1,72 @@
+---
+# code: language=ansible
+- name: Ensure git, Python3 and pip are installed
+  ansible.builtin.apt:
+    name:
+      - python3
+      - python3-pip
+      - python3-venv
+      - git
+    state: present
+    update_cache: true
+
+- name: Clone the GitHub repository
+  ansible.builtin.git:
+    repo: https://github.com/rgregor/netcup-ddns.git
+    dest: "{{ ddns_client_path }}"
+    version: master
+    force: true
+
+- name: Install dependencies from pyproject.toml
+  ansible.builtin.pip:
+    requirements: "{{ ddns_client_path }}/pyproject.toml"
+    virtualenv: "{{ ddns_client_path }}/.venv"
+    virtualenv_command: python3 -m venv
+    state: present
+
+- name: Create a custom user with no login shell
+  ansible.builtin.user:
+    name: "{{ ddns_client_system_user }}"
+    shell: /bin/false
+    create_home: false
+
+- name: Copy the configuration file for the service
+  ansible.builtin.template:
+    src: templates/netcup-ddns.conf.j2
+    dest: "{{ ddns_client_path }}/netcup-ddns.conf"
+    owner: "{{ ddns_client_system_user }}"
+    group: "{{ ddns_client_system_user }}"
+    mode: "0640"
+
+- name: Copy and install Systemd unit file
+  ansible.builtin.copy:
+    src: /path/to/your/myapp.service
+    dest: /etc/systemd/system/myapp.service
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Reload systemd daemon to pick up the new unit file
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Ensure myapp service is enabled and started
+  ansible.builtin.systemd:
+    name: myapp
+    state: started
+    enabled: true
+    # Adding dependency on network-online.target
+    daemon_reload: true
+
+- name: Ensure network is online before starting myapp
+  ansible.builtin.systemd:
+    name: myapp
+    state: restarted
+    enabled: true
+    daemon_reload: true
+    # Add a dependency to network-online.target
+    unit: |
+      [Unit]
+      Description=MyApp Service
+      After=network-online.target
+      Wants=network-online.target

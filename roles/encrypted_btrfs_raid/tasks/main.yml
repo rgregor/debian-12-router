@@ -1,0 +1,13 @@
+---
+# code: language=ansible
+- name: Import secrets ramdisk task
+  ansible.builtin.import_tasks: create_secrets_tmpfs.yaml
+
+- name: Import encryption key tasks
+  ansible.builtin.import_tasks: create-encryption-key.yaml
+
+- name: Import luks tasks
+  ansible.builtin.import_tasks: create-luks-volume.yaml
+
+- name: Import btrfs tasks
+  ansible.builtin.import_tasks: create-btrfs-raid.yaml
